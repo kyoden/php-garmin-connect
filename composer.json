@@ -1,5 +1,5 @@
 {
-  "name": "dawguk/php-garmin-connect",
+  "name": "klorie/php-garmin-connect",
   "description": "A PHP adapter for interrogating the Garmin Connect \"API\"",
   "require": {
     "php": ">=5.3.0"

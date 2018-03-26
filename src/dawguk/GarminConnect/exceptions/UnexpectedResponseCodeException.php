@@ -14,7 +14,7 @@
  * @copyright David Wilcock &copy; 2014
  * @package
  */
-namespace dawguk\GarminConnect\exceptions;
+namespace klorie\GarminConnect\exceptions;
 
 class UnexpectedResponseCodeException extends \Exception
 {

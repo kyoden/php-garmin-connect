@@ -15,7 +15,7 @@
  * @package
  */
 
-namespace dawguk\GarminConnect\exceptions;
+namespace klorie\GarminConnect\exceptions;
 
 class RedirectException extends \Exception
 {
