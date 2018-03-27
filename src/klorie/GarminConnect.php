@@ -10,8 +10,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * @author David Wilcock <dave.wilcock@gmail.com>
- * @copyright David Wilcock &copy; 2014
+ * @author Cyril Laury & Dave Wilcock
+ * @copyright David Wilcock &copy; 2014 Cyril Laury &copy; 2018
  * @package
  */
 
@@ -183,6 +183,45 @@ class GarminConnect
         $objResponse = json_decode($strResponse);
         return $objResponse;
     }
+
+    /**
+     * @return mixed
+     * @throws UnexpectedResponseCodeException
+     */
+    public function getUserGearList()
+    {
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/proxy/userstats-service/gears/all',
+            null,
+            null,
+            false
+        );
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse);
+        return $objResponse;
+    }
+
+    /**
+     * @return mixed
+     * @throws UnexpectedResponseCodeException
+     */
+    public function getUserGear($uuid)
+    {
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/proxy/gear-service/gear/'.$uuid,
+            null,
+            null,
+            false
+        );
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse);
+        return $objResponse;
+    }
+
 
     /**
       * Get count of activities for the given user
