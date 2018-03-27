@@ -20,6 +20,7 @@ namespace klorie;
 use klorie\GarminConnect\Connector;
 use klorie\GarminConnect\exceptions\AuthenticationException;
 use klorie\GarminConnect\exceptions\UnexpectedResponseCodeException;
+use Carbon\Carbon;
 
 class GarminConnect
 {
@@ -273,6 +274,11 @@ class GarminConnect
     public function getExtendedActivityDetails($intActivityID)
     {
         $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service/activity/" . $intActivityID . "/details?maxChartSize=1000&maxPolylineSize=1000");
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse);
+
         return json_decode($strResponse);
     }
 
@@ -319,4 +325,25 @@ class GarminConnect
         $objResponse = json_decode($strResponse);
         return $objResponse->username;
     }
+
+    /**
+     * Get Wellness daily summary for the given user
+     * @param  Carbon $summary_date
+     * @return mixed
+     * @throws UnexpectedResponseCodeException
+     */
+    public function getWellnessDailySummary(Carbon $summary_date = null)
+    {
+        $garmin_username = $this->getUsername();
+        if ($summary_date === null) {
+            $summary_date = Carbon::now();
+        }
+        $strResponse = $this->objConnector->get('https://connect.garmin.com/proxy/wellness-service/wellness/dailySummary/'.$summary_date->toDateString().'/'.$garmin_username);
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse);
+        return $objResponse;
+    }
+
 }
