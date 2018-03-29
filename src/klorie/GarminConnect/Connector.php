@@ -82,7 +82,7 @@ class Connector
     */
     public function get($strUrl, $arrParams = array(), $bolAllowRedirects = true)
     {
-        if (count($arrParams)) {
+        if (is_array($arrParams)) {
             $strUrl .= '?' . http_build_query($arrParams);
         }
 
@@ -111,7 +111,7 @@ class Connector
         curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
         curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($this->objCurl, CURLOPT_VERBOSE, false);
-        if (count($arrData)) {
+        if (is_array($arrData)) {
             curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
             curl_setopt($this->objCurl, CURLOPT_POSTFIELDS, http_build_query($arrData));
         }

@@ -172,7 +172,7 @@ class GarminConnect
     public function getActivityTypes()
     {
         $strResponse = $this->objConnector->get(
-            'https://connect.garmin.com/proxy/activity-service/activityTypes',
+            'https://connect.garmin.com/proxy/activity-service/activity/activityTypes',
             null,
             null,
             false
@@ -214,6 +214,27 @@ class GarminConnect
             null,
             null,
             false
+        );
+        if ($this->objConnector->getLastResponseCode() != 200) {
+            throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
+        }
+        $objResponse = json_decode($strResponse);
+        return $objResponse;
+    }
+
+    /**
+     * @return mixed
+     * @throws UnexpectedResponseCodeException
+     */
+    public function getActivityGear($activity_id)
+    {
+        $arrParams = array(
+            'activityId' => $activity_id
+        );
+        $strResponse = $this->objConnector->get(
+            'https://connect.garmin.com/proxy/gear-service/gear/filterGear',
+            $arrParams,
+            true
         );
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
@@ -312,7 +333,7 @@ class GarminConnect
      */
     public function getExtendedActivityDetails($intActivityID)
     {
-        $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service/activity/" . $intActivityID . "/details?maxChartSize=1000&maxPolylineSize=1000");
+        $strResponse = $this->objConnector->get("https://connect.garmin.com/proxy/activity-service/activity/" . $intActivityID . "/details");
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
