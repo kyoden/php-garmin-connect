@@ -1,6 +1,6 @@
 <?php
 /**
- * UnexpectedResponseCodeException.php
+ * RedirectException.php
  *
  * LICENSE: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -14,13 +14,10 @@
  * @copyright David Wilcock &copy; 2014
  * @package
  */
-namespace klorie\GarminConnect\exceptions;
 
-class UnexpectedResponseCodeException extends \Exception
+namespace dawguk\GarminConnect\exceptions;
+
+class RedirectException extends \Exception
 {
-    public function __construct($strResponseCode)
-    {
-        $strMessage = "An unexpected response code was found: " . $strResponseCode;
-        parent::__construct($strMessage, 0, null);
-    }
+
 }

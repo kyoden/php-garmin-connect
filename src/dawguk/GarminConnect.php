@@ -15,11 +15,11 @@
  * @package
  */
 
-namespace klorie;
+namespace dawguk;
 
-use klorie\GarminConnect\Connector;
-use klorie\GarminConnect\exceptions\AuthenticationException;
-use klorie\GarminConnect\exceptions\UnexpectedResponseCodeException;
+use dawguk\GarminConnect\Connector;
+use dawguk\GarminConnect\exceptions\AuthenticationException;
+use dawguk\GarminConnect\exceptions\UnexpectedResponseCodeException;
 use Carbon\Carbon;
 
 class GarminConnect

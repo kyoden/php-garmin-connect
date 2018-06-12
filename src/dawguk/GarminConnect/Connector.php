@@ -15,7 +15,7 @@
  * @package
  */
 
-namespace klorie\GarminConnect;
+namespace dawguk\GarminConnect;
 
 class Connector
 {

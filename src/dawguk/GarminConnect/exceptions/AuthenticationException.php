@@ -15,7 +15,7 @@
  * @package
  */
 
-namespace klorie\GarminConnect\exceptions;
+namespace dawguk\GarminConnect\exceptions;
 
 class AuthenticationException extends \Exception
 {
