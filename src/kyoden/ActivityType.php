@@ -4,7 +4,7 @@
  * @date      01/08/17 08:04
  * @copyright 2017
  */
-namespace dawguk\GarminConnect;
+namespace kyoden\GarminConnect;
 
 class ActivityType
 {

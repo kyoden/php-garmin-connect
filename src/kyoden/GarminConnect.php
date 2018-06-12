@@ -15,14 +15,14 @@
  * @package
  */
 
-namespace dawguk;
+namespace kyoden;
 
-use dawguk\GarminConnect\Connector;
-use dawguk\GarminConnect\ParametersBuilder\ActivityFilter;
-use dawguk\GarminConnect\exceptions\AuthenticationException;
-use dawguk\GarminConnect\exceptions\UnexpectedResponseCodeException;
-use dawguk\GarminConnect\ParametersBuilder\AuthParameters;
-use dawguk\GarminConnect\ParametersBuilder\ParametersBuilder;
+use kyoden\GarminConnect\Connector;
+use kyoden\GarminConnect\ParametersBuilder\ActivityFilter;
+use kyoden\GarminConnect\exceptions\AuthenticationException;
+use kyoden\GarminConnect\exceptions\UnexpectedResponseCodeException;
+use kyoden\GarminConnect\ParametersBuilder\AuthParameters;
+use kyoden\GarminConnect\ParametersBuilder\ParametersBuilder;
 use Carbon\Carbon;
 
 class GarminConnect

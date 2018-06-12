@@ -1,6 +1,6 @@
 <?php
 
-namespace dawguk\GarminConnect\ParametersBuilder;
+namespace kyoden\GarminConnect\ParametersBuilder;
 
 /**
  * @author    Gwenael HELLEUX <gwenael [.] helleux [@] yahoo [.] fr>

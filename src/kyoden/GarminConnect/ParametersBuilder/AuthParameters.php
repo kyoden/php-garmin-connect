@@ -5,7 +5,7 @@
  * @copyright 2017
  */
 
-namespace dawguk\GarminConnect\ParametersBuilder;
+namespace kyoden\GarminConnect\ParametersBuilder;
 
 
 class AuthParameters extends ParametersBuilder

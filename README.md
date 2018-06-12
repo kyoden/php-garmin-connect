@@ -4,6 +4,9 @@ PHP Garmin Connect
 This is a fork from dawguk code mainly for updating to latest Garmin Connect features
 A PHP adapter for interrogating the Garmin Connect "API"
 
+Fork : dawguk/php-garmin-connect and merged with klorie/php-garmin-connect
+
+
 Preamble
 ========
 
@@ -31,7 +34,7 @@ $arrCredentials = array(
 );
 
 try {
-   $objGarminConnect = new \klorie\GarminConnect($arrCredentials);
+   $objGarminConnect = new \kyoden\GarminConnect($arrCredentials);
 
    $objResults = $objGarminConnect->getActivityList(0, 1);
    foreach($objResults->results->activities as $objActivity) {
@@ -65,7 +68,7 @@ Returns a stdClass object, which contains an array called dictionary, that conta
 
 ```php
 try {
-   $objGarminConnect = new \klorie\GarminConnect($arrCredentials);
+   $objGarminConnect = new \kyoden\GarminConnect($arrCredentials);
    $obj_results = $objGarminConnect->getActivityTypes();
    foreach ($obj_results->dictionary as $item) {
       print_r($item);

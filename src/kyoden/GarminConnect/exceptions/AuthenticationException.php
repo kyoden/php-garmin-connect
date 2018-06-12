@@ -1,6 +1,6 @@
 <?php
 /**
- * UnexpectedResponseCodeException.php
+ * AuthenticationException.php
  *
  * LICENSE: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -14,13 +14,10 @@
  * @copyright David Wilcock &copy; 2014
  * @package
  */
-namespace dawguk\GarminConnect\exceptions;
 
-class UnexpectedResponseCodeException extends \Exception
+namespace kyoden\GarminConnect\exceptions;
+
+class AuthenticationException extends \Exception
 {
-    public function __construct($strResponseCode)
-    {
-        $strMessage = "An unexpected response code was found: " . $strResponseCode;
-        parent::__construct($strMessage, 0, null);
-    }
+
 }

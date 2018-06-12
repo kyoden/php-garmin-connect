@@ -15,9 +15,9 @@
  * @package
  */
 
-namespace dawguk\GarminConnect;
+namespace kyoden\GarminConnect;
 
-use dawguk\GarminConnect\ParametersBuilder\ParametersBuilder;
+use kyoden\GarminConnect\ParametersBuilder\ParametersBuilder;
 
 class Connector
 {

@@ -15,7 +15,7 @@
  * @package
  */
 
-namespace dawguk\GarminConnect\exceptions;
+namespace kyoden\GarminConnect\exceptions;
 
 class RedirectException extends \Exception
 {

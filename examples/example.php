@@ -7,7 +7,7 @@ $arrCredentials = array(
 );
 
 try {
-   $objGarminConnect = new \klorie\GarminConnect($arrCredentials);
+   $objGarminConnect = new \kyoden\GarminConnect($arrCredentials);
 
    $objResults = $objGarminConnect->getActivityList();
    print_r($objResults);
