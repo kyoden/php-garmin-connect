@@ -10,8 +10,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * @author Cyril Laury & Dave Wilcock
- * @copyright David Wilcock &copy; 2014 Cyril Laury &copy; 2018
+ * @author Cyril Laury & Dave Wilcock & Gwenael Helleux
+ * @copyright David Wilcock &copy; 2014 Cyril Laury &copy; 2018 Gwenal Helleux &copy; 2018  
  * @package
  */
 

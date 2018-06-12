@@ -11,6 +11,7 @@
  * SOFTWARE.
  *
  * @author David Wilcock <dave.wilcock@gmail.com>
+ * @author Gwenael Helleux
  * @copyright David Wilcock &copy; 2014
  * @package
  */

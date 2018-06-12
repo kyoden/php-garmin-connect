@@ -1,12 +1,12 @@
 <?php
+/**
+ * @author    Gwenael HELLEUX
+ * @copyright Gwenael HELLEUX &copy; 2018
+ * @copyright 2018
+ */
 
 namespace kyoden\GarminConnect\ParametersBuilder;
 
-/**
- * @author    Gwenael HELLEUX <gwenael [.] helleux [@] yahoo [.] fr>
- * @date      01/08/17 08:04
- * @copyright 2017
- */
 class ParametersBuilder
 {
     const EQUAL = '=';
