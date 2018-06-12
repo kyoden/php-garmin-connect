@@ -18,8 +18,11 @@
 namespace dawguk;
 
 use dawguk\GarminConnect\Connector;
+use dawguk\GarminConnect\ParametersBuilder\ActivityFilter;
 use dawguk\GarminConnect\exceptions\AuthenticationException;
 use dawguk\GarminConnect\exceptions\UnexpectedResponseCodeException;
+use dawguk\GarminConnect\ParametersBuilder\AuthParameters;
+use dawguk\GarminConnect\ParametersBuilder\ParametersBuilder;
 use Carbon\Carbon;
 
 class GarminConnect
@@ -104,15 +107,13 @@ class GarminConnect
      */
     private function authorize($strUsername, $strPassword)
     {
-        $arrParams = array(
-            'service' => 'https://connect.garmin.com/modern/',
-            'webhost' => 'https://connect.garmin.com',
-            'source'  => 'https://connect.garmin.com/en-US/signin',
-            'clientId' => 'GarminConnect',
-            'gauthHost' => 'https://sso.garmin.com/sso',
-            'consumeServiceTicket' => 'false'
-        );
-        $strResponse = $this->objConnector->get("https://sso.garmin.com/sso/login", $arrParams);
+        $params = new ParametersBuilder();
+        $params->set('service', ParametersBuilder::EQUAL, 'https://connect.garmin.com/post-auth/login');
+        $params->set('clientId', ParametersBuilder::EQUAL, 'GarminConnect');
+        $params->set('gauthHost', ParametersBuilder::EQUAL, 'https://sso.garmin.com/sso');
+        $params->set('consumeServiceTicket', ParametersBuilder::EQUAL, 'false');
+
+        $strResponse = $this->objConnector->get("https://sso.garmin.com/sso/login", $params);
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new AuthenticationException(sprintf(
                 "SSO prestart error (code: %d, message: %s)",
@@ -121,15 +122,11 @@ class GarminConnect
             ));
         }
 
-        $arrData = array(
-            "username" => $strUsername,
-            "password" => $strPassword,
-            "_eventId" => "submit",
-            "embed" => "true",
-            "displayNameRequired" => "false"
-        );
+        $authParameters = new AuthParameters();
+        $authParameters->username($strUsername);
+        $authParameters->password($strPassword);
 
-        $strResponse = $this->objConnector->post("https://sso.garmin.com/sso/login", $arrParams, $arrData, false);
+        $strResponse = $this->objConnector->post("https://sso.garmin.com/sso/login", $params, $authParameters, false);
         preg_match("/ticket=([^\"]+)\"/", $strResponse, $arrMatches);
 
         if (!isset($arrMatches[1])) {
@@ -146,11 +143,12 @@ class GarminConnect
         }
 
         $strTicket = $arrMatches[0];
-        $arrParams = array(
-            'ticket' => $strTicket
-        );
+        
 
-        $this->objConnector->post('https://connect.garmin.com/modern/', $arrParams, null, false);
+        $params = new ParametersBuilder();
+        $params->set('ticket', ParametersBuilder::EQUAL, $strTicket);
+
+        $this->objConnector->post('https://connect.garmin.com/modern/', $params, null, false);
         if ($this->objConnector->getLastResponseCode() != 302) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
@@ -266,21 +264,15 @@ class GarminConnect
     /**
      * Gets a list of activities
      *
-     * @param integer $intStart
-     * @param integer $intLimit
+     * @param ActivityFilter $filter
      * @throws UnexpectedResponseCodeException
      * @return mixed
      */
-    public function getActivityList($intStart = 0, $intLimit = 10)
+    public function getActivityList(ActivityFilter $filter)
     {
-        $arrParams = array(
-            'start' => $intStart,
-            'limit' => $intLimit
-        );
-
         $strResponse = $this->objConnector->get(
             'https://connect.garmin.com/proxy/activitylist-service/activities/search/activities',
-            $arrParams,
+            $filter,
             true
         );
         if ($this->objConnector->getLastResponseCode() != 200) {
@@ -336,8 +328,6 @@ class GarminConnect
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
-        $objResponse = json_decode($strResponse);
-
         return json_decode($strResponse);
     }
 
@@ -387,17 +377,17 @@ class GarminConnect
 
     /**
      * Get Wellness daily summary for the given user
-     * @param  Carbon $summary_date
+     * @param  Carbon $summaryDate
      * @return mixed
      * @throws UnexpectedResponseCodeException
      */
-    public function getWellnessDailySummary(Carbon $summary_date = null)
+    public function getWellnessDailySummary(Carbon $summaryDate = null)
     {
-        $garmin_username = $this->getUsername();
-        if ($summary_date === null) {
-            $summary_date = Carbon::now();
+        $garminUsername = $this->getUsername();
+        if ($summaryDate === null) {
+            $summaryDate = Carbon::now();
         }
-        $strResponse = $this->objConnector->get('https://connect.garmin.com/proxy/wellness-service/wellness/dailySummary/'.$summary_date->toDateString().'/'.$garmin_username);
+        $strResponse = $this->objConnector->get('https://connect.garmin.com/proxy/wellness-service/wellness/dailySummary/'.$summaryDate->toDateString().'/'.$garminUsername);
         if ($this->objConnector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }

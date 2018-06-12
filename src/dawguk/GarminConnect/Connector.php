@@ -17,6 +17,8 @@
 
 namespace dawguk\GarminConnect;
 
+use dawguk\GarminConnect\ParametersBuilder\ParametersBuilder;
+
 class Connector
 {
    /**
@@ -76,14 +78,14 @@ class Connector
 
    /**
     * @param string $strUrl
-    * @param array $arrParams
+    * @param ParametersBuilder $params
     * @param bool $bolAllowRedirects
     * @return mixed
     */
-    public function get($strUrl, $arrParams = array(), $bolAllowRedirects = true)
+    public function get($strUrl, ParametersBuilder $params = null, $bolAllowRedirects = true)
     {
-        if (is_array($arrParams)) {
-            $strUrl .= '?' . http_build_query($arrParams);
+        if ($params) {
+            $strUrl .= '?' . $params->build();
         }
 
         curl_setopt($this->objCurl, CURLOPT_URL, $strUrl);
@@ -98,25 +100,25 @@ class Connector
 
    /**
     * @param string $strUrl
-    * @param array $arrParams
+    * @param ParametersBuilder $params
     * @param array $arrData
     * @param bool $bolAllowRedirects
     * @return mixed
     */
-    public function post($strUrl, $arrParams = array(), $arrData = array(), $bolAllowRedirects = true)
+    public function post($strUrl, ParametersBuilder $params = null, ParametersBuilder $data = null, $bolAllowRedirects = true)
     {
-
         curl_setopt($this->objCurl, CURLOPT_HEADER, true);
         curl_setopt($this->objCurl, CURLOPT_FRESH_CONNECT, true);
         curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
         curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($this->objCurl, CURLOPT_VERBOSE, false);
-        if (is_array($arrData)) {
+        if ($data) {
             curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-            curl_setopt($this->objCurl, CURLOPT_POSTFIELDS, http_build_query($arrData));
+            curl_setopt($this->objCurl, CURLOPT_POSTFIELDS, $data->build());
         }
-        $strUrl .= '?' . http_build_query($arrParams);
-
+        if ($params) {
+            $strUrl .= '?' . $params->build();
+        }
         curl_setopt($this->objCurl, CURLOPT_URL, $strUrl);
 
         $strResponse = curl_exec($this->objCurl);
@@ -133,7 +135,7 @@ class Connector
         return $this->arrCurlInfo;
     }
 
-   /**
+    /**
     * @return int
     */
     public function getLastResponseCode()
@@ -141,9 +143,9 @@ class Connector
         return $this->intLastResponseCode;
     }
 
-   /**
-    * Removes the cookie
-    */
+    /**
+     * Removes the cookie
+     */
     public function clearCookie()
     {
         if (file_exists($this->strCookieFile)) {
