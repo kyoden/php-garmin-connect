@@ -107,7 +107,7 @@ Returns a stdClass object, which contains an array called results, that contains
 
 ```php
    try {
-      $objGarminConnect = new \klorie\GarminConnect($arrCredentials);
+      $objGarminConnect = new \kyoden\GarminConnect($arrCredentials);
       $obj_results = $objGarminConnect->getActivityList(0, 1);
       print_r($obj_results);
    } catch (Exception $objException) {
@@ -179,7 +179,7 @@ Returns a stdClass object, that contains a stdClass object called activity, whic
 
 ```php
 try {
-   $objGarminConnect = new \klorie\GarminConnect($arrCredentials);
+   $objGarminConnect = new \kyoden\GarminConnect($arrCredentials);
    $obj_results = $objGarminConnect->getActivitySummary(593520370);
    print_r($obj_results);
 } catch (Exception $objException) {
@@ -209,7 +209,7 @@ Note: This method may take a while to return any data, as it can be vast.
 
 ```php
 try {
-   $objGarminConnect = new \klorie\GarminConnect($arrCredentials);
+   $objGarminConnect = new \kyoden\GarminConnect($arrCredentials);
    $obj_results = $objGarminConnect->getActivityDetails(593520370);
    print_r($obj_results);
 } catch (Exception $objException) {
@@ -235,8 +235,8 @@ Returns a string representation of requested data type, for the given activity I
 
 ```php
    try {
-      $objGarminConnect = new \klorie\GarminConnect($arrCredentials);
-      $obj_results = $objGarminConnect->getDataFile(\klorie\GarminConnect::DATA_TYPE_GPX, 593520370);
+      $objGarminConnect = new \kyoden\GarminConnect($arrCredentials);
+      $obj_results = $objGarminConnect->getDataFile(\kyoden\GarminConnect::DATA_TYPE_GPX, 593520370);
       print_r($obj_results);
    } catch (Exception $objException) {
       echo "Oops: " . $objException->getMessage();
