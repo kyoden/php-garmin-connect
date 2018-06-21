@@ -10,10 +10,10 @@ namespace kyoden\GarminConnect\ParametersBuilder;
 class ParametersBuilder
 {
     const EQUAL = '=';
-    const GREATER_THAN = '>';
-    const GREATER_THAN_OR_EQUAL = '>=';
-    const LESS_THAN = '<';
-    const LESS_THAN_OR_EQUAL = '<=';
+    const GREATER_THAN = '%3E';
+    const GREATER_THAN_OR_EQUAL = '%3E=';
+    const LESS_THAN = '%3C';
+    const LESS_THAN_OR_EQUAL = '%3C=';
 
     private $parameters = [];
 

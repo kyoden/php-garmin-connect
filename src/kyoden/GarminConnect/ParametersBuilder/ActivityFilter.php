@@ -9,53 +9,73 @@ namespace kyoden\GarminConnect\ParametersBuilder;
 
 class ActivityFilter extends ParametersBuilder
 {
-    private $betweenFrom;
-    private $betweenTo;
-
-    public function start($start)
+    public function start(int $start)
     {
-        $this->set('start', self::EQUAL, (int)$start);
+        if ($start < 0) {
+            throw new \InvalidArgumentExcpetion('ActivityFilter start must greater than or equal zero');
+        }
+        $this->set('start', self::EQUAL, $start);
         return $this;
     }
 
-    public function limit($limit)
+    public function limit(int $limit)
     {
-        $this->set('limit', self::EQUAL, (int)$limit);
+        if ($limit <= 0) {
+            throw new \InvalidArgumentExcpetion('ActivityFilter limit must greater than zero');
+        }
+        $this->set('limit', self::EQUAL, $limit);
         return $this;
     }
 
-    public function type($type)
+    public function type(string $type)
     {
         $this->set('activityType', self::EQUAL, $type);
         return $this;
     }
 
-    public function eventType($type)
+    public function eventType(string $type)
     {
         $this->set('eventType', self::EQUAL, $type);
         return $this;
     }
 
-    public function beginTimestamp($operator, \Datetime $date)
+    public function startDate(\Datetime $date)
     {
-        $this->set('beginTimestamp', $operator, $date->format('Y-m-d\TH:i:s,000\Z'));
+        $this->set('startDate', self::EQUAL, $date->format('Y-m-d'));
+    }
+
+    public function endDate(\Datetime $date)
+    {
+        $this->set('endDate', self::EQUAL, $date->format('Y-m-d'));
+    }
+
+    public function betweenDate(\DateTime $from, \DateTime $to)
+    {
+        $this->startDate($from);
+        $this->endDate($to);
         return $this;
     }
 
-    public function between(\DateTime $from, \DateTime $to)
+    public function maxDistance(int $metersDistance)
     {
-        $this->betweenFrom = $from;
-        $this->betweenTo = $to;
-        return $this;
-    }
-
-    public function build()
-    {
-        $build = parent::build();
-        if ($this->betweenFrom) {
-            $build .= '&beginTimestamp>=' . $this->betweenFrom->format('Y-m-d\TH:i:s,000\Z');
-            $build .= '&endTimestamp<=' . $this->betweenTo->format('Y-m-d\TH:i:s,000\Z');
+        if ($metersDistance <= 0) {
+            throw new \InvalidArgumentExcpetion('ActivityFilter maxDistance must greater than zero');
         }
-        return ltrim($build, '&');
+        $this->set('maxDistance', self::EQUAL, $metersDistance);
+    }
+
+    public function minDistance(int $metersDistance)
+    {
+        if ($metersDistance <= 0) {
+            throw new \InvalidArgumentExcpetion('ActivityFilter minDistance must greater than zero');
+        }
+        $this->set('minDistance', self::EQUAL, $metersDistance);
+    }
+
+    public function betweenDistance(int $minMeters, int $maxMeters)
+    {
+        $this->minDistance($minMeters);
+        $this->maxDistance($maxMeters);
+        return $this;
     }
 }
