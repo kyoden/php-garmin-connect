@@ -108,9 +108,9 @@ class GarminConnect
     private function authorize($strUsername, $strPassword)
     {
         $params = new ParametersBuilder();
-        $params->set('service', ParametersBuilder::EQUAL, 'https://connect.garmin.com/post-auth/login');
+        $params->set('service', ParametersBuilder::EQUAL, 'https://connect.garmin.com/modern/');
         $params->set('clientId', ParametersBuilder::EQUAL, 'GarminConnect');
-        $params->set('gauthHost', ParametersBuilder::EQUAL, 'https://sso.garmin.com/sso');
+        $params->set('gauthHost', ParametersBuilder::EQUAL, 'https://connect.garmin.com/post-auth/login');
         $params->set('consumeServiceTicket', ParametersBuilder::EQUAL, 'false');
 
         $strResponse = $this->objConnector->get("https://sso.garmin.com/sso/login", $params);
@@ -268,7 +268,7 @@ class GarminConnect
      * @throws UnexpectedResponseCodeException
      * @return mixed
      */
-    public function getActivityList(ActivityFilter $filter)
+    public function getActivityList(ActivityFilter $filter = null)
     {
         $strResponse = $this->objConnector->get(
             'https://connect.garmin.com/proxy/activitylist-service/activities/search/activities',
@@ -372,7 +372,7 @@ class GarminConnect
             throw new UnexpectedResponseCodeException($this->objConnector->getLastResponseCode());
         }
         $objResponse = json_decode($strResponse);
-        return $objResponse->username;
+        return is_object($objResponse) ? $objResponse->username : null;
     }
 
     /**
