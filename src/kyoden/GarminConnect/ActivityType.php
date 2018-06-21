@@ -9,4 +9,7 @@ namespace kyoden\GarminConnect;
 class ActivityType
 {
     const RUNNING = 'running';
+    const CYLCING = 'cycling';
+    const SWIMMING = 'swimming';
+    const OTHERS = 'other';
 }
