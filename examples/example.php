@@ -1,5 +1,5 @@
 <?php
-require_once '../vendor/autoload.php';
+require_once __DIR__ .'/../vendor/autoload.php';
 
 $arrCredentials = array(
    'username' => 'xxx',
@@ -9,9 +9,16 @@ $arrCredentials = array(
 try {
    $objGarminConnect = new \kyoden\GarminConnect($arrCredentials);
 
-   $objResults = $objGarminConnect->getActivityList();
-   print_r($objResults);
+   $fitlers = new \kyoden\GarminConnect\ParametersBuilder\ActivityFilter();
+   $fitlers->betweenDate(new \DateTime('2018-05-01'), new \DateTime('2018-05-31'));
+   $fitlers->type(\kyoden\GarminConnect\ActivityType::RUNNING);
+   $fitlers->limit(15);
+   
+   $objResults = $objGarminConnect->getActivityList($fitlers);
+   foreach ($objResults as $activity) {
+       print "\n - {$activity->activityName} at {$activity->startTimeLocal} (type: {$activity->activityType->typeKey})";
+   }
 
 } catch (Exception $objException) {
-   echo "Oops: " . $objException->getMessage();
+   echo "Oops: " . $objException->getMessage() ;
 }
