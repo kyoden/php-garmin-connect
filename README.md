@@ -99,76 +99,25 @@ try {
 
     )
  
-### getActivityList(integer $intStart, integer $intLimit)
+### getActivityList(ActivityFilter $filters)
 
-Returns a stdClass object, which contains an array called results, that contains stdClass objects that represents an activity. It accepts two parameters - start and limit; start is the record that you wish to start from, and limit is the number of records that you would like returned.
+Returns a stdClass object, which contains an array called results, that contains stdClass objects that represents an activity. It accepts the parameter ActivityFilter, an object for facility the filter of activities.
 
 #### Example
 
 ```php
    try {
       $objGarminConnect = new \kyoden\GarminConnect($arrCredentials);
-      $obj_results = $objGarminConnect->getActivityList(0, 1);
+      $fitlers = new \kyoden\GarminConnect\ParametersBuilder\ActivityFilter();
+      $fitlers->betweenDate(new \DateTime('2018-06-01'), new \DateTime('2018-06-05'));
+      $fitlers->type(\kyoden\GarminConnect\ActivityType::RUNNING);
+      
+      $obj_results = $objGarminConnect->getActivityList($fitlers);
       print_r($obj_results);
    } catch (Exception $objException) {
       echo "Oops: " . $objException->getMessage();
    }
 ```
-
-#### Response (not exhaustive)
-
-    stdClass Object
-    (
-    [results] => stdClass Object
-        (
-            [activities] => Array
-                (
-                    [0] => stdClass Object
-                        (
-                            [activity] => stdClass Object
-                                (
-                                    [activityId] => 593520370
-                                    [activityName] => stdClass Object
-                                        (
-                                            [value] => Untitled
-                                        )
-
-                                    [activityDescription] => stdClass Object
-                                        (
-                                            [value] => 
-                                        )
-
-                                    [locationName] => stdClass Object
-                                        (
-                                            [value] => 
-                                        )
-
-                                    [userId] => 1653429
-                                    [username] => bob@bob.bob
-                                    [uploadDate] => stdClass Object
-                                        (
-                                            [display] => Thu, 18 Sep 2014 1:34 PM
-                                            [value] => 2014-09-18
-                                            [withDay] => Thu, 18 Sep 2014
-                                            [abbr] => 18 Sep 2014
-                                            [millis] => 1411047273000
-                                        )
-
-                                    [uploadedWith] => stdClass Object
-                                        (
-                                            [key] => garminExpressWin
-                                            [display] => Garmin Express Windows
-                                            [displaySingular] => Garmin Express Windows
-                                            [version] => 2.9.6.10
-                                        )
-
-                                    [device] => stdClass Object
-                                        (
-                                            [key] => edge510
-                                            [display] => Garmin Edge 510
-                                            [displaySingular] => Garmin Edge 510
-                                            [version] => 3.10.0.0
-                                        )
 
 
 ### getActivitySummary(integer $intActvityID)
