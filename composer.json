@@ -2,7 +2,7 @@
   "name": "kyoden/php-garmin-connect",
   "description": "A PHP adapter for interrogating the Garmin Connect \"API\"",
   "require": {
-    "php": ">=7.0.0",
+    "php": ">=7.1",
     "nesbot/carbon": "^1.25"
   },
   "license": "MIT",
@@ -11,7 +11,9 @@
       "src/"
     ]
   },
-  "include-path": ["src/"],
+  "include-path": [
+    "src/"
+  ],
   "require-dev": {
     "squizlabs/php_codesniffer": "2.8.*"
   }

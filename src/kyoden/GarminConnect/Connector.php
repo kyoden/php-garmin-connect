@@ -10,8 +10,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  *
- * @author David Wilcock <dave.wilcock@gmail.com>
- * @author Gwenael Helleux
+ * @author    David Wilcock <dave.wilcock@gmail.com>
+ * @author    Gwenael Helleux
  * @copyright David Wilcock &copy; 2014
  * @package
  */
@@ -22,144 +22,149 @@ use kyoden\GarminConnect\ParametersBuilder\ParametersBuilder;
 
 class Connector
 {
-   /**
-    * @var null|resource
-    */
-    private $objCurl = null;
-    private $arrCurlInfo = array();
-    private $strCookieDirectory = '';
+    /**
+     * @var null|resource
+     */
+    private $curl = null;
+    private $curlInfo = [];
+    private $cookieDirectory = '';
 
-   /**
-    * @var array
-    */
-    private $arrCurlOptions = array(
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_SSL_VERIFYHOST => false,
-      CURLOPT_SSL_VERIFYPEER => false,
-      CURLOPT_COOKIESESSION => false,
-      CURLOPT_AUTOREFERER => true,
-      CURLOPT_VERBOSE => false,
-      CURLOPT_FRESH_CONNECT => true
-    );
+    /**
+     * @var array
+     */
+    private $curlOptions = [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_COOKIESESSION  => false,
+        CURLOPT_AUTOREFERER    => true,
+        CURLOPT_VERBOSE        => false,
+        CURLOPT_FRESH_CONNECT  => true,
+    ];
 
-   /**
-    * @var int
-    */
-    private $intLastResponseCode = -1;
+    /**
+     * @var int
+     */
+    private $lastResponseCode = -1;
 
-   /**
-    * @var string
-    */
-    private $strCookieFile = '';
+    /**
+     * @var string
+     */
+    private $cookieFile = '';
 
-   /**
-    * @param string $strUniqueIdentifier
-    * @throws \Exception
-    */
-    public function __construct($strUniqueIdentifier)
+    /**
+     * @param string $uniqueIdentifier
+     *
+     * @throws \Exception
+     */
+    public function __construct(string $uniqueIdentifier)
     {
-        $this->strCookieDirectory = sys_get_temp_dir();
-        if (strlen(trim($strUniqueIdentifier)) == 0) {
+        $this->cookieDirectory = sys_get_temp_dir();
+        if (strlen(trim($uniqueIdentifier)) == 0) {
             throw new \Exception("Identifier isn't valid");
         }
-        $this->strCookieFile = $this->strCookieDirectory . DIRECTORY_SEPARATOR . "GarminCookie_" . $strUniqueIdentifier;
+        $this->cookieFile = $this->cookieDirectory . DIRECTORY_SEPARATOR . "GarminCookie_" . $uniqueIdentifier;
         $this->refreshSession();
     }
 
-   /**
-    * Create a new curl instance
-    */
-    public function refreshSession()
+    /**
+     * Create a new curl instance
+     */
+    public function refreshSession(): void
     {
-        $this->objCurl = curl_init();
-        $this->arrCurlOptions[CURLOPT_COOKIEJAR] = $this->strCookieFile;
-        $this->arrCurlOptions[CURLOPT_COOKIEFILE] = $this->strCookieFile;
-        curl_setopt_array($this->objCurl, $this->arrCurlOptions);
-    }
-
-   /**
-    * @param string $strUrl
-    * @param ParametersBuilder $params
-    * @param bool $bolAllowRedirects
-    * @return mixed
-    */
-    public function get($strUrl, ParametersBuilder $params = null, $bolAllowRedirects = true)
-    {
-        if ($params) {
-            $strUrl .= '?' . $params->build();
-        }
-
-        curl_setopt($this->objCurl, CURLOPT_URL, $strUrl);
-        curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
-        curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, 'GET');
-
-        $strResponse = curl_exec($this->objCurl);
-        $arrCurlInfo = curl_getinfo($this->objCurl);
-        $this->intLastResponseCode = $arrCurlInfo['http_code'];
-        return $strResponse;
-    }
-
-   /**
-    * @param string $strUrl
-    * @param ParametersBuilder $params
-    * @param array $arrData
-    * @param bool $bolAllowRedirects
-    * @return mixed
-    */
-    public function post($strUrl, ParametersBuilder $params = null, ParametersBuilder $data = null, $bolAllowRedirects = true)
-    {
-        curl_setopt($this->objCurl, CURLOPT_HEADER, true);
-        curl_setopt($this->objCurl, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($this->objCurl, CURLOPT_FOLLOWLOCATION, (bool)$bolAllowRedirects);
-        curl_setopt($this->objCurl, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($this->objCurl, CURLOPT_VERBOSE, false);
-        if ($data) {
-            curl_setopt($this->objCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
-            curl_setopt($this->objCurl, CURLOPT_POSTFIELDS, $data->build());
-        }
-        if ($params) {
-            $strUrl .= '?' . $params->build();
-        }
-        curl_setopt($this->objCurl, CURLOPT_URL, $strUrl);
-
-        $strResponse = curl_exec($this->objCurl);
-        $this->arrCurlInfo = curl_getinfo($this->objCurl);
-        $this->intLastResponseCode = (int)$this->arrCurlInfo['http_code'];
-        return $strResponse;
-    }
-
-   /**
-    * @return array
-    */
-    public function getCurlInfo()
-    {
-        return $this->arrCurlInfo;
+        $this->curl = curl_init();
+        $this->curlOptions[CURLOPT_COOKIEJAR] = $this->cookieFile;
+        $this->curlOptions[CURLOPT_COOKIEFILE] = $this->cookieFile;
+        curl_setopt_array($this->curl, $this->curlOptions);
     }
 
     /**
-    * @return int
-    */
-    public function getLastResponseCode()
+     * @param string            $url
+     * @param ParametersBuilder $params
+     * @param bool              $allowRedirects
+     *
+     * @return string
+     */
+    public function get($url, ParametersBuilder $params = null, bool $allowRedirects = true): string
     {
-        return $this->intLastResponseCode;
+        if ($params) {
+            $url .= '?' . $params->build();
+        }
+
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, (bool)$allowRedirects);
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'GET');
+
+        $response = curl_exec($this->curl);
+        $curlInfo = curl_getinfo($this->curl);
+        $this->lastResponseCode = $curlInfo['http_code'];
+
+        return $response;
+    }
+
+    /**
+     * @param string            $url
+     * @param ParametersBuilder $params
+     * @param ParametersBuilder $data
+     * @param bool              $allowRedirects
+     *
+     * @return mixed
+     */
+    public function post(string $url, ParametersBuilder $params = null, ParametersBuilder $data = null, bool $allowRedirects = true)
+    {
+        curl_setopt($this->curl, CURLOPT_HEADER, true);
+        curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
+        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, (bool)$allowRedirects);
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($this->curl, CURLOPT_VERBOSE, false);
+        if ($data) {
+            curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data->build());
+        }
+        if ($params) {
+            $url .= '?' . $params->build();
+        }
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+
+        $response = curl_exec($this->curl);
+        $this->curlInfo = curl_getinfo($this->curl);
+        $this->lastResponseCode = (int)$this->curlInfo['http_code'];
+
+        return $response;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCurlInfo(): array
+    {
+        return $this->curlInfo;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLastResponseCode(): int
+    {
+        return $this->lastResponseCode;
     }
 
     /**
      * Removes the cookie
      */
-    public function clearCookie()
+    public function clearCookie(): void
     {
-        if (file_exists($this->strCookieFile)) {
-            unlink($this->strCookieFile);
+        if (file_exists($this->cookieFile)) {
+            unlink($this->cookieFile);
         }
     }
 
-   /**
-    * Closes curl and then clears the cookie.
-    */
-    public function cleanupSession()
+    /**
+     * Closes curl and then clears the cookie.
+     */
+    public function cleanupSession(): void
     {
-        curl_close($this->objCurl);
+        curl_close($this->curl);
         $this->clearCookie();
     }
 }
