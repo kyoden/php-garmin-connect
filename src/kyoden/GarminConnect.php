@@ -68,7 +68,7 @@ class GarminConnect
         $this->connector = new Connector(md5($this->username));
 
         if ($resetSession) {
-            $this->connector->cleanupSession();
+            $this->connector->clearCookie();
         } elseif ($this->checkCookieAuth()) {
             return;
         }
