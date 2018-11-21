@@ -15,15 +15,15 @@
  * @package
  */
 
-namespace kyoden;
+namespace GarminConnect;
 
 use Carbon\Carbon;
-use kyoden\GarminConnect\Connector;
-use kyoden\GarminConnect\exceptions\AuthenticationException;
-use kyoden\GarminConnect\exceptions\UnexpectedResponseCodeException;
-use kyoden\GarminConnect\ParametersBuilder\ActivityFilter;
-use kyoden\GarminConnect\ParametersBuilder\AuthParameters;
-use kyoden\GarminConnect\ParametersBuilder\ParametersBuilder;
+use GarminConnect\Connector;
+use GarminConnect\exceptions\AuthenticationException;
+use GarminConnect\exceptions\UnexpectedResponseCodeException;
+use GarminConnect\ParametersBuilder\ActivityFilter;
+use GarminConnect\ParametersBuilder\AuthParameters;
+use GarminConnect\ParametersBuilder\ParametersBuilder;
 
 class GarminConnect
 {

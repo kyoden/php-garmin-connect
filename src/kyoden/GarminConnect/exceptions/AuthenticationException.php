@@ -15,7 +15,7 @@
  * @package
  */
 
-namespace kyoden\GarminConnect\exceptions;
+namespace GarminConnect\exceptions;
 
 class AuthenticationException extends \Exception
 {

@@ -16,9 +16,9 @@
  * @package
  */
 
-namespace kyoden\GarminConnect;
+namespace GarminConnect;
 
-use kyoden\GarminConnect\ParametersBuilder\ParametersBuilder;
+use GarminConnect\ParametersBuilder\ParametersBuilder;
 
 class Connector
 {

@@ -5,7 +5,7 @@
  * @copyright 2018
  */
 
-namespace kyoden\GarminConnect\ParametersBuilder;
+namespace GarminConnect\ParametersBuilder;
 
 class AuthParameters extends ParametersBuilder
 {
