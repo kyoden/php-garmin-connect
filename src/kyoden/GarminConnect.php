@@ -119,8 +119,10 @@ class GarminConnect
     {
         $params = new ParametersBuilder();
         $params->set('service', ParametersBuilder::EQUAL, 'https://connect.garmin.com/modern/');
+        $params->set('webhost', ParametersBuilder::EQUAL, 'https://connect.garmin.com');
+        $params->set('source', ParametersBuilder::EQUAL, 'https://connect.garmin.com/en-US/signin');
         $params->set('clientId', ParametersBuilder::EQUAL, 'GarminConnect');
-        $params->set('gauthHost', ParametersBuilder::EQUAL, 'https://connect.garmin.com/post-auth/login');
+        $params->set('gauthHost', ParametersBuilder::EQUAL, 'https://sso.garmin.com/sso');
         $params->set('consumeServiceTicket', ParametersBuilder::EQUAL, 'false');
 
         $response = $this->connector->get("https://sso.garmin.com/sso/login", $params);
@@ -152,7 +154,7 @@ class GarminConnect
             throw new AuthenticationException($message);
         }
 
-        $ticket = $matches[0];
+        $ticket = rtrim($matches[0], '"');
 
         $params = new ParametersBuilder();
         $params->set('ticket', ParametersBuilder::EQUAL, $ticket);
