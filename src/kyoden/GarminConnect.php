@@ -292,6 +292,31 @@ class GarminConnect
     }
 
     /**
+     * Gets all activities
+     *
+     * @param ActivityFilter $filter
+     *
+     * @throws UnexpectedResponseCodeException
+     * @return array
+     */
+    public function getAllActivityList(ActivityFilter $filter): ?array
+    {
+        $page = 0;
+        $limit = 100;
+        $data = [];
+
+        $filter->limit($limit);
+        do {
+            $filter->start($page * $limit);
+            $found = $this->getActivityList($filter);
+            $data = array_merge($data, $found);
+            ++$page;
+        } while(count($found) == $limit);
+
+        return $data;
+    }
+
+    /**
      * Gets the summary information for the activity
      *
      * @param integer $activityID
