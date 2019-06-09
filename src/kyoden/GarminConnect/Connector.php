@@ -98,7 +98,6 @@ class Connector
         $response = curl_exec($this->curl);
         $curlInfo = curl_getinfo($this->curl);
         $this->lastResponseCode = $curlInfo['http_code'];
-
         return $response;
     }
 
@@ -110,7 +109,7 @@ class Connector
      *
      * @return mixed
      */
-    public function post(string $url, ParametersBuilder $params = null, ParametersBuilder $data = null, bool $allowRedirects = true)
+    public function post(string $url, ParametersBuilder $params = null, ParametersBuilder $data = null, bool $allowRedirects = true, string $referer = null)
     {
         curl_setopt($this->curl, CURLOPT_HEADER, true);
         curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
@@ -121,6 +120,9 @@ class Connector
             curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
             curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data->build());
         }
+        if (null !== $referer) {
+            curl_setopt($this->curl, CURLOPT_REFERER, $referer);
+        }
         if ($params) {
             $url .= '?' . $params->build();
         }
@@ -129,7 +131,6 @@ class Connector
         $response = curl_exec($this->curl);
         $this->curlInfo = curl_getinfo($this->curl);
         $this->lastResponseCode = (int)$this->curlInfo['http_code'];
-
         return $response;
     }
 

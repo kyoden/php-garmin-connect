@@ -14,7 +14,7 @@
  * @copyright David Wilcock &copy; 2014
  * @package
  */
-namespace kyoden\GarminConnect\exceptions;
+namespace GarminConnect\exceptions;
 
 class UnexpectedResponseCodeException extends \Exception
 {

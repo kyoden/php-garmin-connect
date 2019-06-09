@@ -18,7 +18,6 @@
 namespace GarminConnect;
 
 use Carbon\Carbon;
-use GarminConnect\Connector;
 use GarminConnect\exceptions\AuthenticationException;
 use GarminConnect\exceptions\UnexpectedResponseCodeException;
 use GarminConnect\ParametersBuilder\ActivityFilter;
@@ -29,6 +28,7 @@ class GarminConnect
 {
     const BASE_URL_CG = 'https://connect.garmin.com';
 
+    const DATA_TYPE_CSV = 'csv';
     const DATA_TYPE_TCX = 'tcx';
     const DATA_TYPE_GPX = 'gpx';
     const DATA_TYPE_GOOGLE_EARTH = 'kml';
@@ -44,7 +44,7 @@ class GarminConnect
     private $password = '';
 
     /**
-     * @var GarminConnect\Connector|null
+     * @var Connector|null
      */
     private $connector = null;
 
@@ -133,12 +133,18 @@ class GarminConnect
                 $response
             ));
         }
+        preg_match("/name=\"_csrf\" value=\"(.*)\"/", $response, $csrfMatches);
+
+        if (!isset($csrfMatches[1])) {
+            throw new AuthenticationException("Unable to find CSRF input in login form");
+        }
 
         $authParameters = new AuthParameters();
         $authParameters->username($username);
         $authParameters->password($password);
+        $authParameters->csrf($csrfMatches);
 
-        $response = $this->connector->post("https://sso.garmin.com/sso/login", $params, $authParameters, false);
+        $response = $this->connector->post("https://sso.garmin.com/sso/login", $params, $authParameters, false, "https://sso.garmin.com/sso/login?". $params->build());
         preg_match("/ticket=([^\"]+)\"/", $response, $matches);
 
         if (!isset($matches[1])) {
@@ -363,11 +369,12 @@ class GarminConnect
      *
      * @throws GarminConnect\exceptions\UnexpectedResponseCodeException
      * @throws \Exception
-     * @return \stdClass
+     * @return string
      */
-    public function getDataFile(string $type, int $activityID): ?\stdClass
+    public function getDataFile(string $type, int $activityID): ?string
     {
         switch ($type) {
+            case self::DATA_TYPE_CSV;
             case self::DATA_TYPE_GPX:
             case self::DATA_TYPE_TCX:
             case self::DATA_TYPE_GOOGLE_EARTH:
@@ -377,7 +384,7 @@ class GarminConnect
                 throw new \Exception('Unsupported data type');
         }
 
-        return $this->get(self::BASE_URL_CG . '/proxy/download-service/export/' . $type . '/activity/' . $activityID);
+        return $this->getRaw(self::BASE_URL_CG . '/proxy/download-service/export/' . $type . '/activity/' . $activityID);
     }
 
     /**
@@ -416,11 +423,22 @@ class GarminConnect
      */
     private function get(string $url): ?\stdClass
     {
+        return json_decode($this->getRaw($url));
+    }
+
+    /**
+     * @param string $url
+     *
+     * @return null|string
+     * @throws UnexpectedResponseCodeException
+     */
+    private function getRaw(string $url): ?string
+    {
         $response = $this->connector->get($url);
         if ($this->connector->getLastResponseCode() != 200) {
             throw new UnexpectedResponseCodeException($this->connector->getLastResponseCode());
         }
 
-        return json_decode($response);
+        return $response;
     }
 }

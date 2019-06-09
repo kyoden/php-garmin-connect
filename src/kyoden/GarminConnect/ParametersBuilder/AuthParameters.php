@@ -25,4 +25,9 @@ class AuthParameters extends ParametersBuilder
     {
         return $this->set('password', self::EQUAL, $password);
     }
+
+    public function csrf($csrf)
+    {
+        return $this->set('_csrf', self::EQUAL, $csrf);
+    }
 }

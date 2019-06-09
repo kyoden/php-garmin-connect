@@ -3,6 +3,8 @@
   "description": "A PHP adapter for interrogating the Garmin Connect \"API\"",
   "require": {
     "php": ">=7.1",
+    "ext-curl": "*",
+    "ext-json": "*",
     "nesbot/carbon": "^1.25"
   },
   "license": "MIT",
