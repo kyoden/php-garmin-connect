@@ -16,17 +16,38 @@ class AuthParameters extends ParametersBuilder
         $this->set('displayNameRequired', self::EQUAL, 'false');
     }
 
-    public function username($username)
+    /**
+     * @param string $username
+     *
+     * @return AuthParameters
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function username(string $username): AuthParameters
     {
         return $this->set('username', self::EQUAL, $username);
     }
 
-    public function password($password)
+    /**
+     * @param string $password
+     *
+     * @return AuthParameters
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function password(string $password): AuthParameters
     {
         return $this->set('password', self::EQUAL, $password);
     }
 
-    public function csrf($csrf)
+    /**
+     * @param string $csrf
+     *
+     * @return AuthParameters
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function csrf(string $csrf): AuthParameters
     {
         return $this->set('_csrf', self::EQUAL, $csrf);
     }

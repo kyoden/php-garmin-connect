@@ -1,6 +1,6 @@
 <?php
 /**
- * Connector.php
+ * Connector.php.
  *
  * LICENSE: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -13,7 +13,6 @@
  * @author    David Wilcock <dave.wilcock@gmail.com>
  * @author    Gwenael Helleux
  * @copyright David Wilcock &copy; 2014
- * @package
  */
 
 namespace GarminConnect;
@@ -23,7 +22,7 @@ use GarminConnect\ParametersBuilder\ParametersBuilder;
 class Connector
 {
     /**
-     * @var null|resource
+     * @var resource|null
      */
     private $curl = null;
     private $curlInfo = [];
@@ -36,16 +35,11 @@ class Connector
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_SSL_VERIFYHOST => false,
         CURLOPT_SSL_VERIFYPEER => false,
-        CURLOPT_COOKIESESSION  => false,
-        CURLOPT_AUTOREFERER    => true,
-        CURLOPT_VERBOSE        => false,
-        CURLOPT_FRESH_CONNECT  => true,
+        CURLOPT_COOKIESESSION => false,
+        CURLOPT_AUTOREFERER => true,
+        CURLOPT_VERBOSE => false,
+        CURLOPT_FRESH_CONNECT => true,
     ];
-
-    /**
-     * @var int
-     */
-    private $lastResponseCode = -1;
 
     /**
      * @var string
@@ -54,21 +48,23 @@ class Connector
 
     /**
      * @param string $uniqueIdentifier
+     * @param string $cookieDirectory
      *
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
-    public function __construct(string $uniqueIdentifier)
+    public function __construct(string $uniqueIdentifier, ?string $cookieDirectory = null)
     {
-        $this->cookieDirectory = sys_get_temp_dir();
-        if (strlen(trim($uniqueIdentifier)) == 0) {
-            throw new \Exception("Identifier isn't valid");
+        if (0 == strlen(trim($uniqueIdentifier))) {
+            throw new \InvalidArgumentException('Identifier isn\'t valid');
         }
-        $this->cookieFile = $this->cookieDirectory . DIRECTORY_SEPARATOR . "GarminCookie_" . $uniqueIdentifier;
+
+        $this->cookieDirectory = $cookieDirectory ?? sys_get_temp_dir();
+        $this->cookieFile = $this->cookieDirectory . DIRECTORY_SEPARATOR . 'GarminCookie_' . $uniqueIdentifier;
         $this->refreshSession();
     }
 
     /**
-     * Create a new curl instance
+     * Create a new curl instance.
      */
     public function refreshSession(): void
     {
@@ -79,59 +75,43 @@ class Connector
     }
 
     /**
-     * @param string            $url
-     * @param ParametersBuilder $params
-     * @param bool              $allowRedirects
+     * @param string                 $url
+     * @param ParametersBuilder|null $params
+     * @param bool                   $allowRedirects
      *
      * @return string
      */
-    public function get($url, ParametersBuilder $params = null, bool $allowRedirects = true): string
+    public function get(string $url, ?ParametersBuilder $params = null, bool $allowRedirects = true): string
     {
-        if ($params) {
-            $url .= '?' . $params->build();
-        }
-
-        curl_setopt($this->curl, CURLOPT_URL, $url);
-        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, (bool)$allowRedirects);
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'GET');
 
-        $response = curl_exec($this->curl);
-        $curlInfo = curl_getinfo($this->curl);
-        $this->lastResponseCode = $curlInfo['http_code'];
-        return $response;
+        return $this->call($url, $params, $allowRedirects);
     }
 
     /**
-     * @param string            $url
-     * @param ParametersBuilder $params
-     * @param ParametersBuilder $data
-     * @param bool              $allowRedirects
+     * @param string                 $url
+     * @param ParametersBuilder|null $params
+     * @param ParametersBuilder|null $data
+     * @param bool                   $allowRedirects
+     * @param string|null            $referer
      *
      * @return mixed
      */
-    public function post(string $url, ParametersBuilder $params = null, ParametersBuilder $data = null, bool $allowRedirects = true, string $referer = null)
+    public function post(string $url, ?ParametersBuilder $params = null, ?ParametersBuilder $data = null, bool $allowRedirects = true, ?string $referer = null)
     {
         curl_setopt($this->curl, CURLOPT_HEADER, true);
         curl_setopt($this->curl, CURLOPT_FRESH_CONNECT, true);
-        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, (bool)$allowRedirects);
-        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($this->curl, CURLOPT_VERBOSE, false);
         if ($data) {
-            curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/x-www-form-urlencoded'));
+            curl_setopt($this->curl, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
             curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data->build());
         }
         if (null !== $referer) {
             curl_setopt($this->curl, CURLOPT_REFERER, $referer);
         }
-        if ($params) {
-            $url .= '?' . $params->build();
-        }
-        curl_setopt($this->curl, CURLOPT_URL, $url);
 
-        $response = curl_exec($this->curl);
-        $this->curlInfo = curl_getinfo($this->curl);
-        $this->lastResponseCode = (int)$this->curlInfo['http_code'];
-        return $response;
+        return $this->call($url, $params, $allowRedirects);
     }
 
     /**
@@ -147,11 +127,11 @@ class Connector
      */
     public function getLastResponseCode(): int
     {
-        return $this->lastResponseCode;
+        return $this->curlInfo ? (int) $this->curlInfo['http_code'] : -1;
     }
 
     /**
-     * Removes the cookie
+     * Removes the cookie.
      */
     public function clearCookie(): void
     {
@@ -167,5 +147,27 @@ class Connector
     {
         curl_close($this->curl);
         $this->clearCookie();
+    }
+
+    /**
+     * @param string                 $url
+     * @param ParametersBuilder|null $params
+     * @param bool                   $allowRedirects
+     *
+     * @return string
+     */
+    private function call(string $url, ?ParametersBuilder $params = null, bool $allowRedirects = true): string
+    {
+        if ($params) {
+            $url .= '?' . $params->build();
+        }
+
+        curl_setopt($this->curl, CURLOPT_URL, $url);
+        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, (bool) $allowRedirects);
+
+        $response = curl_exec($this->curl);
+        $this->curlInfo = curl_getinfo($this->curl);
+
+        return $response;
     }
 }

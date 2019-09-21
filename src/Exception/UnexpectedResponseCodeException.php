@@ -1,6 +1,6 @@
 <?php
 /**
- * RedirectException.php
+ * UnexpectedResponseCodeException.php.
  *
  * LICENSE: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -12,12 +12,15 @@
  *
  * @author David Wilcock <dave.wilcock@gmail.com>
  * @copyright David Wilcock &copy; 2014
- * @package
  */
 
-namespace kyoden\GarminConnect\exceptions;
+namespace GarminConnect\Exception;
 
-class RedirectException extends \Exception
+class UnexpectedResponseCodeException extends \Exception
 {
-
+    public function __construct($code)
+    {
+        $strMessage = 'An unexpected response code was found: ' . $code;
+        parent::__construct($strMessage, 0, null);
+    }
 }

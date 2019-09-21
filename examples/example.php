@@ -1,24 +1,34 @@
 <?php
-require_once __DIR__ .'/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 $arrCredentials = array(
-   'username' => 'my_email@mail.com',
-   'password' => 'my_secret_password'
+    'username' => 'gwenael.helleux@yahoo.fr',
+    'password' => 'S85+g83=<3-6',
 );
 
 try {
-   $objGarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
+    $GarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
 
-   $fitlers = new \GarminConnect\ParametersBuilder\ActivityFilter();
-   $fitlers->betweenDate(new \DateTime('2018-05-01'), new \DateTime('2018-05-31'));
-   $fitlers->type(\GarminConnect\ActivityType::RUNNING);
-   $fitlers->limit(1);
-   
-   $objResults = $objGarminConnect->getActivityList($fitlers);
-   foreach ($objResults as $activity) {
-       print "\n - {$activity->activityName} at {$activity->startTimeLocal} (type: {$activity->activityType->typeKey})";
-   }
+    print "=> getUsername() : " . $GarminConnect->getUsername() . PHP_EOL;
+    print "=> getActivityCount() : " . PHP_EOL;
+    print_r($GarminConnect->getActivityCount());
+
+    $filters = new \GarminConnect\ParametersBuilder\ActivityFilter();
+    $filters->betweenDate(new \DateTime('2018-05-01'), new \DateTime('2018-05-31'));
+    $filters->type(\GarminConnect\ActivityType::RUNNING);
+    $filters->limit(1);
+
+    print "=> getActivityList() :" . PHP_EOL;
+    $results = $GarminConnect->getActivityList($filters);
+    foreach ($results as $activity) {
+        print " - {$activity->activityName} at {$activity->startTimeLocal} (type: {$activity->activityType->typeKey})" . PHP_EOL;
+//        print_r($GarminConnect->getActivitySummary($activity->activityId));
+//        print_r($GarminConnect->getActivityDetails($activity->activityId));
+//        print_r($GarminConnect->getExtendedActivityDetails($activity->activityId));
+//        print_r($GarminConnect->getActivityGear($activity->activityId));
+    }
+
 
 } catch (Exception $objException) {
-   echo "Oops: " . $objException->getMessage() ;
+    echo "Oops: " . $objException->getMessage();
 }

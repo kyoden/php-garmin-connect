@@ -34,11 +34,15 @@ $arrCredentials = array(
 );
 
 try {
-   $objGarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
+  $GarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
 
-   $objResults = $objGarminConnect->getActivityList(0, 1);
-   foreach($objResults->results->activities as $objActivity) {
-      print_r($objActivity->activity);
+  $filters = new \GarminConnect\ParametersBuilder\ActivityFilter();
+  $filters->betweenDate(new \DateTime('2018-05-01'), new \DateTime('2018-05-31'));
+  $filters->type(\GarminConnect\ActivityType::RUNNING);
+  $filters->limit(1);
+
+  $results = $GarminConnect->getActivityList($filters);
+  foreach ($results as $activity) {print " - {$activity->activityName} at {$activity->startTimeLocal} (type: {$activity->activityType->typeKey})" . PHP_EOL;
    }
 
 } catch (Exception $objException) {
@@ -68,8 +72,8 @@ Returns a stdClass object, which contains an array called dictionary, that conta
 
 ```php
 try {
-   $objGarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
-   $obj_results = $objGarminConnect->getActivityTypes();
+   $GarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
+   $obj_results = $GarminConnect->getActivityTypes();
    foreach ($obj_results->dictionary as $item) {
       print_r($item);
    }
@@ -107,12 +111,12 @@ Returns a stdClass object, which contains an array called results, that contains
 
 ```php
    try {
-      $objGarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
+      $GarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
       $fitlers = new \GarminConnect\GarminConnect\ParametersBuilder\ActivityFilter();
       $fitlers->betweenDate(new \DateTime('2018-06-01'), new \DateTime('2018-06-05'));
       $fitlers->type(\GarminConnect\GarminConnect\ActivityType::RUNNING);
       
-      $obj_results = $objGarminConnect->getActivityList($fitlers);
+      $obj_results = $GarminConnect->getActivityList($fitlers);
       print_r($obj_results);
    } catch (Exception $objException) {
       echo "Oops: " . $objException->getMessage();
@@ -128,8 +132,8 @@ Returns a stdClass object, that contains a stdClass object called activity, whic
 
 ```php
 try {
-   $objGarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
-   $obj_results = $objGarminConnect->getActivitySummary(593520370);
+   $GarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
+   $obj_results = $GarminConnect->getActivitySummary(593520370);
    print_r($obj_results);
 } catch (Exception $objException) {
    echo "Oops: " . $objException->getMessage();
@@ -158,8 +162,8 @@ Note: This method may take a while to return any data, as it can be vast.
 
 ```php
 try {
-   $objGarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
-   $obj_results = $objGarminConnect->getActivityDetails(593520370);
+   $GarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
+   $obj_results = $GarminConnect->getActivityDetails(593520370);
    print_r($obj_results);
 } catch (Exception $objException) {
    echo "Oops: " . $objException->getMessage();
@@ -176,6 +180,7 @@ Returns a string representation of requested data type, for the given activity I
 
 |Type | Returns |
 |---- | ------- |
+|\GarminConnect\GarminConnect::DATA_TYPE_CSV | CSV string |
 |\GarminConnect\GarminConnect::DATA_TYPE_GPX | GPX as XML string |
 |\GarminConnect\GarminConnect::DATA_TYPE_TCX | TCX as XML string |
 |\GarminConnect\GarminConnect::DATA_TYPE_GOOGLE_EARTH | Google Earth as XML string |
@@ -184,8 +189,8 @@ Returns a string representation of requested data type, for the given activity I
 
 ```php
    try {
-      $objGarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
-      $obj_results = $objGarminConnect->getDataFile(\GarminConnect\GarminConnect::DATA_TYPE_GPX, 593520370);
+      $GarminConnect = new \GarminConnect\GarminConnect($arrCredentials);
+      $obj_results = $GarminConnect->getDataFile(\GarminConnect\GarminConnect::DATA_TYPE_GPX, 593520370);
       print_r($obj_results);
    } catch (Exception $objException) {
       echo "Oops: " . $objException->getMessage();
