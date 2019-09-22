@@ -6,8 +6,8 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $arrCredentials = array(
-    'username' => $argv[0],
-    'password' => $argv[1],
+    'username' => $argv[1],
+    'password' => $argv[2],
 );
 
 try {
