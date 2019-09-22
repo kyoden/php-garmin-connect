@@ -1,9 +1,13 @@
 <?php
+/**
+ * Usage : php example.php "email@domain.com" "password"
+ */
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $arrCredentials = array(
-    'username' => 'gwenael.helleux@yahoo.fr',
-    'password' => 'S85+g83=<3-6',
+    'username' => $argv[0],
+    'password' => $argv[1],
 );
 
 try {
